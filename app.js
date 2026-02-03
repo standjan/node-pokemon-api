@@ -1,0 +1,57 @@
+const express = require("express");
+const morgan = require("morgan");
+//const favicon = require("serve-favicon");
+//const bodyParser = require("body-parser");
+const { success, getUniqueId } = require("./helper.js");
+let pokemons = require("./mock-pokemons");
+
+const app = express();
+const port = 3000;
+
+//app.use(favicon(__dirname + "/favicon.ico"));
+app.use(morgan("dev"));
+app.use(express.json());
+
+app.get("/", (req, res) => res.send("Hello, Express !"));
+
+// on retourne la liste des pokemons au format JSON.
+app.get("/api/pokemons", (req, res) => {
+  const message = "La liste des pokemons a bien ete recuperee.";
+  res.json(success(message, pokemons));
+});
+
+app.get("/api/pokemons/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const pokemon = pokemons.find((pokemon) => pokemon.id === id);
+  res.json(pokemon);
+});
+
+app.post("/api/pokemons", (req, res) => {
+  const id = getUniqueId(pokemons);
+  const pokemonCreated = { ...req.body, ...{ id: id, Created: new Date() } };
+  pokemons.push(pokemonCreated);
+  const message = `Le pokemon ${pokemonCreated.name} a bien ete cree.`;
+  res.json(success(message, pokemonCreated));
+});
+
+app.put("/api/pokemons/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const pokemonUpdated = { ...req.body, id: id };
+  pokemons = pokemons.map((pokemon) => {
+    return pokemon.id === id ? pokemonUpdated : pokemon;
+  });
+  const message = `Le pokemon ${pokemonUpdated.name} a bien ete modifie.`;
+  res.json(success(message, pokemonUpdated));
+});
+
+app.delete("/api/pokemons/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const pokemonDeleted = pokemons.find((pokemon) => pokemon.id === id);
+  pokemons = pokemons.filter((pokemon) => pokemon.id !== id);
+  const message = `Le pokemon ${pokemonDeleted.name} a bien ete supprime.`;
+  res.json(success(message, pokemonDeleted));
+});
+
+app.listen(port, () =>
+  console.log(`Notre application est demarree sur : http://localhost:${port}`),
+);
