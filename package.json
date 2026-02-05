@@ -1,0 +1,23 @@
+{
+  "name": "pokemon-api",
+  "version": "1.0.0",
+  "description": "node-pokemon-api",
+  "license": "ISC",
+  "author": "TANDJAN",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "express": "^5.2.1",
+    "mariadb": "^3.4.5",
+    "nodemon": "^3.1.11",
+    "sequelize": "^6.37.7",
+    "serve-favicon": "^2.5.1"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.1"
+  }
+}
