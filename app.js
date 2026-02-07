@@ -2,9 +2,11 @@ const express = require("express");
 const morgan = require("morgan");
 //const favicon = require("serve-favicon");
 //const bodyParser = require("body-parser");
-const { Sequelize } = require("sequelize");
+const { Sequelize, DataTypes } = require("sequelize");
 const { success, getUniqueId } = require("./helper.js");
 let pokemons = require("./mock-pokemons");
+const PokemonModel = require("./src/pokemon.js");
+const pokemon = require("./src/pokemon.js");
 
 const app = express();
 const port = 3000;
@@ -26,6 +28,22 @@ sequelize
   .catch((error) => {
     console.error("Unable to connect to the database:", error);
   });
+
+const Pokemon = PokemonModel(sequelize, DataTypes);
+
+sequelize.sync({ force: true }).then((__) => {
+  console.log(`Database & tables created!`);
+
+  pokemons.map((pokemon) => {
+    Pokemon.create({
+      name: pokemon.name,
+      hp: pokemon.hp,
+      cp: pokemon.cp,
+      picture: pokemon.picture,
+      types: pokemon.types.join(),
+    }).then((bulbizzare) => console.log(bulbizzare.toJSON()));
+  });
+});
 
 //app.use(favicon(__dirname + "/favicon.ico"));
 app.use(morgan("dev"));
